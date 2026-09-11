@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>K4 Day 1 — LLM Chat Demo</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-title">
+      <h1>K4 · Ngày 1 — Web Chat Demo</h1>
+      <p class="subtitle">Trực quan hóa pipeline: câu hỏi → messages → LLM API → phản hồi → history → token/chi phí</p>
+    </div>
+    <div class="topbar-meta">
+      <span class="badge" id="model-badge">model: …</span>
+      <span class="badge muted" id="baseurl-badge">endpoint: …</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Cột trái: khung chat -->
+    <section class="panel chat-panel">
+      <div class="persona-bar">
+        <label for="persona-input">System prompt (persona)</label>
+        <div class="persona-row">
+          <input id="persona-input" type="text" placeholder="Bạn là trợ lý AI hữu ích." />
+          <button id="reset-btn" class="btn secondary" title="Xóa lịch sử, giữ nguyên persona">
+            Reset hội thoại
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-window" id="chat-window">
+        <div class="empty-hint" id="empty-hint">
+          Chưa có tin nhắn nào. Nhập câu hỏi bên dưới để bắt đầu.
+        </div>
+      </div>
+
+      <div class="status-line" id="status-line" hidden></div>
+
+      <form class="composer" id="composer">
+        <textarea
+          id="message-input"
+          rows="2"
+          placeholder="Nhập câu hỏi của bạn… (Enter để gửi, Shift+Enter xuống dòng)"
+        ></textarea>
+        <button type="submit" class="btn primary" id="send-btn">Gửi</button>
+      </form>
+    </section>
+
+    <!-- Cột phải: pipeline + debug + thống kê -->
+    <aside class="panel side-panel">
+      <div class="side-block">
+        <h2>Luồng xử lý một lượt hỏi–đáp</h2>
+        <ol class="pipeline" id="pipeline">
+          <li data-step="input">Người dùng nhập câu hỏi</li>
+          <li data-step="build">Ứng dụng tạo danh sách messages</li>
+          <li data-step="context">System prompt + lịch sử + câu hỏi mới</li>
+          <li data-step="send">Gửi request tới LLM API</li>
+          <li data-step="model">Model sinh phản hồi</li>
+          <li data-step="render">Hiển thị nội dung, cập nhật history</li>
+          <li data-step="cost">Đếm token, ước tính chi phí</li>
+        </ol>
+      </div>
+
+      <div class="side-block">
+        <div class="side-block-header">
+          <h2>Messages gửi tới API (lượt gần nhất)</h2>
+          <button id="toggle-debug" class="btn ghost" type="button">Ẩn/hiện</button>
+        </div>
+        <pre class="debug-box" id="debug-box">(chưa có request nào)</pre>
+      </div>
+
+      <div class="side-block">
+        <h2>Thống kê phiên chat</h2>
+        <div class="stats-grid">
+          <div class="stat">
+            <span class="stat-label">Số lượt</span>
+            <span class="stat-value" id="stat-turns">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Tổng token</span>
+            <span class="stat-value" id="stat-tokens">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Chi phí ước tính</span>
+            <span class="stat-value" id="stat-cost">$0.000000</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">History hiện tại</span>
+            <span class="stat-value" id="stat-history">0/6 message</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

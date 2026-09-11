@@ -5,6 +5,10 @@
 docs/
 
 .venv/
+venv/
 __pycache__/
 .pytest_cache/
 solution.zip
+
+# Cấu hình cục bộ của Claude Code — không cần thiết cho bài nộp
+.claude/
